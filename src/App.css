@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-greadient: linear-gradient(135deg, #6b73ff 10%, #000dff 100%);
+  --color-backgroud: #111827;
+  --color-backgroud2: #26314B;
+  --color-primary: #0061ff;
+  --color-secondary: #ffffff;
+  --color4: #050a14;
+  --color5: #bebebe;
+  --color6: #fd3333;
+  --color7: #2e3647;
+  --color8: #fbbd23;
+  --color9: #94a3b8;
+}
