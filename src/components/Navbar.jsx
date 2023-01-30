@@ -53,6 +53,16 @@ const Navbar = () => {
             <li className="relative">
               <a
                 className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded  hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                href="/"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="primary">
+                <AiOutlineSetting className="w-3 h-3 mr-3" />
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li className="relative">
+              <a
+                className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded  hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
                 href="/usermanagment"
                 data-mdb-ripple="true"
                 data-mdb-ripple-color="primary">
