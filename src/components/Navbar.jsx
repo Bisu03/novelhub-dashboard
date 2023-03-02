@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   AiOutlineClose,
   AiOutlineLogout,
@@ -9,24 +9,40 @@ import {
 } from "react-icons/ai";
 import { FaUserAlt } from "react-icons/fa";
 import { MdHowToVote } from "react-icons/md";
+import { NavLink, useNavigate } from "react-router-dom";
+import { UserLogOut } from "../apiCalls/auth/auth";
+import { AuthContext } from "../context/userData";
 
 const Navbar = () => {
+  const { user } = useContext(AuthContext);
+
   const [show, setShow] = useState(false);
+
+  const navigate = useNavigate();
+
+  const onLogout = () => {
+    UserLogOut();
+    navigate("/login");
+    window.location.reload();
+  };
+
   return (
     <>
-      <header className=" bg-skin-backgroud body-font">
-        <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-          <button
-            onClick={() => setShow(!show)}
-            className="inline-flex items-center bg-gray-100 border-0 py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-            {show ? <AiOutlineClose /> : <AiOutlineMenu />}
-          </button>
-          <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"></nav>
-          <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <span className="ml-3 text-xl text-skin-base ">DASHBOARD</span>
-          </a>
-        </div>
-      </header>
+      {(user.role === "Admin" || "SuperAdmin") && (
+        <header className=" bg-skin-backgroud body-font">
+          <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+            <button
+              onClick={() => setShow(!show)}
+              className="inline-flex items-center bg-gray-100 border-0 py-2 px-4 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
+              {show ? <AiOutlineClose /> : <AiOutlineMenu />}
+            </button>
+            <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"></nav>
+            <a className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+              <span className="ml-3 text-xl text-skin-base ">DASHBOARD</span>
+            </a>
+          </div>
+        </header>
+      )}
       {show && (
         <div
           className="w-60 h-full bg-skin-backgroud  absolute"
@@ -43,7 +59,7 @@ const Navbar = () => {
                 </div>
                 <div className="grow ml-3">
                   <p className="text-sm font-semibold text-skin-red">
-                    User Name
+                    {user.name}
                   </p>
                 </div>
               </div>
@@ -51,28 +67,31 @@ const Navbar = () => {
           </div>
           <ul className="relative px-1">
             <li className="relative">
-              <a
+              <NavLink
                 className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded  hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                href="/"
+                to="/"
                 data-mdb-ripple="true"
                 data-mdb-ripple-color="primary">
                 <AiOutlineSetting className="w-3 h-3 mr-3" />
                 <span>Dashboard</span>
-              </a>
+              </NavLink>
             </li>
-            <li className="relative">
-              <a
-                className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded  hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                href="/usermanagment"
-                data-mdb-ripple="true"
-                data-mdb-ripple-color="primary">
-                <FaUserAlt className="w-3 h-3 mr-3" />
-                <span>Manage user</span>
-              </a>
-            </li>
+
+            {user.role === "SuperAdmin" && (
+              <li className="relative">
+                <NavLink
+                  className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded  hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
+                  to="/usermanagment"
+                  data-mdb-ripple="true"
+                  data-mdb-ripple-color="primary">
+                  <FaUserAlt className="w-3 h-3 mr-3" />
+                  <span>Manage user</span>
+                </NavLink>
+              </li>
+            )}
             <li className="relative" id="sidenavSecEx2">
-              <a
-                href="/announcement"
+              <NavLink
+                to="/announcement"
                 className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out cursor-pointer"
                 data-mdb-ripple="true"
                 data-mdb-ripple-color="primary"
@@ -82,13 +101,13 @@ const Navbar = () => {
                 aria-controls="collapseSidenavSecEx2">
                 <AiOutlineSound className="w-3 h-3 mr-3" />
                 <span>Announcement</span>
-              </a>
+              </NavLink>
             </li>
             <li className="relative" id="sidenavSecEx3">
-              <a
+              <NavLink
                 className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out cursor-pointer"
                 data-mdb-ripple="true"
-                href="/namagenovel"
+                to="/namagenovel"
                 data-mdb-ripple-color="primary"
                 data-bs-toggle="collapse"
                 data-bs-target="#collapseSidenavSecEx3"
@@ -96,20 +115,20 @@ const Navbar = () => {
                 aria-controls="collapseSidenavSecEx3">
                 <AiOutlineSetting className="w-3 h-3 mr-3" />
                 <span>Manage Novel</span>
-              </a>
+              </NavLink>
             </li>
           </ul>
           <hr className="my-2" />
           <ul className="relative px-1">
             <li className="relative">
-              <a
+              <NavLink
                 className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                href="/suggestion"
+                to="/suggestion"
                 data-mdb-ripple="true"
                 data-mdb-ripple-color="primary">
                 <MdHowToVote className="w-3 h-3 mr-3" />
                 <span>Suggestions</span>
-              </a>
+              </NavLink>
             </li>
             <li className="relative">
               <a
@@ -135,7 +154,7 @@ const Navbar = () => {
             <li className="relative">
               <a
                 className="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-skin-base text-ellipsis whitespace-nowrap rounded hover:text-blue-600 hover:bg-blue-50 transition duration-300 ease-in-out"
-                href=""
+                onClick={onLogout}
                 data-mdb-ripple="true"
                 data-mdb-ripple-color="primary">
                 <AiOutlineLogout className="w-3 h-3 mr-3" />

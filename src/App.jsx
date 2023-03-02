@@ -1,45 +1,33 @@
 import Navbar from "./components/Navbar";
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
 import UserManagment from "./pages/UserManagment";
 import Announcement from "./pages/Announcement";
 import Managenovel from "./pages/Managenovel";
 import Suggestion from "./pages/Suggestion";
 import Login from "./pages/Login";
-
-const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/announcement",
-    element: <Announcement />,
-  },
-  {
-    path: "/suggestion",
-    element: <Suggestion />,
-  },
-  {
-    path: "/namagenovel",
-    element: <Managenovel />,
-  },
-  {
-    path: "/usermanagment",
-    element: <UserManagment />,
-  },
-  {
-    path: "/",
-    element: <>dashboard under development</>,
-  },
-]);
+import PrivateRoutes from "./routes/Privateroutes";
 
 function App() {
   return (
-    <div>
+    <>
       <Navbar />
-      <RouterProvider router={router} />
-    </div>
+      <Routes>
+        <Route path="/login" element={<Login />}></Route>
+
+        <Route element={<PrivateRoutes />}>
+          <Route
+            exact
+            path="/"
+            element={<>dashboard under development</>}></Route>
+          <Route path="/usermanagment" element={<UserManagment />}></Route>
+          <Route path="/suggestion" element={<Suggestion />}></Route>
+          <Route path="/announcement" element={<Announcement />}></Route>
+          <Route path="/namagenovel" element={<Managenovel />}></Route>
+        </Route>
+      </Routes>
+    </>
   );
 }
 

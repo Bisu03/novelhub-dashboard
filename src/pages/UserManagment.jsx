@@ -1,6 +1,74 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { URL } from "../apiCalls/apiUrl";
 
 const UserManagment = () => {
+  const [user, setUser] = useState();
+
+  const fetchUser = async () => {
+    let headersList = {
+      Accept: "*/*",
+      Authorization: "Bearer " + Cookies.get("adminAccessToken"),
+    };
+
+    let reqOptions = {
+      url: URL + "/api/auth/getalluser",
+      method: "GET",
+      headers: headersList,
+    };
+
+    let { data } = await axios.request(reqOptions);
+    setUser(data);
+    console.log(data);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const handleChange = (e, i) => {
+    const { value, name } = e.target;
+
+    const newState = [...user];
+    newState[i] = {
+      ...newState[i],
+      [name]: value,
+    };
+
+    console.log(newState);
+    setUser(newState);
+  };
+
+  const handleUpdate = async (index) => {
+    console.log(user[index].role);
+
+    let headersList = {
+      Accept: "*/*",
+      Authorization: "Bearer " + Cookies.get("adminAccessToken"),
+    };
+
+    let bodyContent = {
+      id: user[index]._id,
+      role: user[index].role,
+      isBlocked: user[index].isBlocked,
+    };
+
+    let reqOptions = {
+      url: URL + "/api/auth/updateuser",
+      method: "PUT",
+      headers: headersList,
+      data: bodyContent,
+    };
+
+    let { data } = await axios.request(reqOptions);
+    if (data.error) {
+      alert(data.error);
+    } else {
+      window.location.reload();
+    }
+  };
+
   return (
     <>
       <section className="text-gray-600 body-font">
@@ -12,7 +80,9 @@ const UserManagment = () => {
           </div>
           <div className="flex lg:w-2/3 w-full sm:flex-row flex-col mx-auto px-8 sm:space-x-4 sm:space-y-0 space-y-4 sm:px-0 items-end">
             <div className="relative flex-grow w-full">
-              <label for="full-name" className="leading-7 text-sm text-gray-600">
+              <label
+                htmlFor="full-name"
+                className="leading-7 text-sm text-gray-600">
                 Search by email or username
               </label>
               <input
@@ -35,52 +105,61 @@ const UserManagment = () => {
             <tr>
               <th className="px-4 py-2">Emails</th>
               <th className="px-4 py-2">User Name</th>
-              <th className="px-4 py-2">Role</th>
+              <th className="px-4 py-2">Update Status</th>
               <th className="px-4 py-2">Update Role</th>
               <th className="px-4 py-2">Update</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="border border-skin-color7 px-4 py-2">
-                Biswanathbera@gmail.com
-              </td>
-              <td className="border border-skin-color7 px-4 py-2">userf8324792</td>
-              <td className="border border-skin-color7 px-4 py-2">user</td>
-              <td>
-                <select
-                  className="border border-skin-color7 px-4 py-2"
-                  name="rolename">
-                  <option value="superadmin">Super Admin</option>
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
-                </select>
-              </td>
+            {user?.map((data, index) => (
+              <tr key={data._id}>
+                <td>
+                  <input
+                    className="border border-skin-color7 px-4 py-2"
+                    name="email"
+                    readOnly
+                    value={data?.email}
+                    onChange={(e) => handleChange(e, index)}
+                  />
+                </td>
+                <td>
+                  <input
+                    className="border border-skin-color7 px-4 py-2"
+                    name="name"
+                    readOnly
+                    value={data?.name}
+                    onChange={(e) => handleChange(e, index)}
+                  />
+                </td>
+                <td>
+                  <select
+                    value={data?.isBlocked}
+                    onChange={(e) => handleChange(e, index)}
+                    className="border border-skin-color7 px-4 py-2"
+                    name="isBlocked">
+                    <option value="true">Blocked</option>
+                    <option value="false">UnBlocked</option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    value={data?.role}
+                    onChange={(e) => handleChange(e, index)}
+                    className="border border-skin-color7 px-4 py-2"
+                    name="role">
+                    <option value="SuperAdmin">Super Admin</option>
+                    <option value="Admin">Admin</option>
+                    <option value="user">User</option>
+                  </select>
+                </td>
 
-              <button className="border  px-4 py-2 bg-skin-color4 text-skin-base ">
-                update
-              </button>
-            </tr>
-            <tr>
-              <td className="border border-skin-color7 px-4 py-2">
-                testuser@gmail.com
-              </td>
-              <td className="border border-skin-color7 px-4 py-2">userf8324792</td>
-              <td className="border border-skin-color7 px-4 py-2">admin</td>
-              <td>
-                <select
-                  className="border border-skin-color7 px-4 py-2"
-                  name="rolename">
-                  <option value="superadmin">Super Admin</option>
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
-                </select>
-              </td>
-
-              <button className="border  px-4 py-2 bg-skin-color4 text-skin-base ">
-                update
-              </button>
-            </tr>
+                <td
+                  onClick={() => handleUpdate(index)}
+                  className="border  px-4 py-2 bg-skin-color4 text-skin-base ">
+                  update
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
